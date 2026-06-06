@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="GestionFactura.Api/GestionFactura.Api.csproj" />
+  <Project Path="GestionFactura.Domain/GestionFactura.Domain.csproj" />
+  <Project Path="GestionFactura.Infrastructure/GestionFactura.Infrastructure.csproj" />
 </Solution>
