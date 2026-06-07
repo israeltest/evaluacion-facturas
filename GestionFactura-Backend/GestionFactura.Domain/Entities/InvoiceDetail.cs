@@ -7,7 +7,7 @@ public class InvoiceDetail
     public int InvoiceId { get; set; }
     public Invoice Invoice { get; set; } = null!;
 
-    // lo dejamos nullable por si el producto se borra o algo asi
+    // Se deja nullable por si el producto se borra o algo asi
     public int? ProductId { get; set; }
     public Product? Product { get; set; }
 

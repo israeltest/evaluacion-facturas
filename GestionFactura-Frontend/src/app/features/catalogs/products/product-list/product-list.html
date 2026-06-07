@@ -28,6 +28,20 @@
       <td mat-cell *matCellDef="let element"> {{element.price | currency}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Estado </th>
+      <td mat-cell *matCellDef="let element"> 
+        <span class="status-badge" [ngClass]="element.isActive ? 'active' : 'inactive'">
+          {{element.isActive ? 'Activo' : 'Inactivo'}}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="added">
+      <th mat-header-cell *matHeaderCellDef> Agregado </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateAdded | date:'dd/MM/yyyy'}} </td>
+    </ng-container>
+
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Acciones </th>
       <td mat-cell *matCellDef="let element">
@@ -45,6 +59,6 @@
   </table>
   
   <div *ngIf="dataSource.length === 0" class="no-data">
-    No hay productos registrados o activos.
+    No hay productos registrados.
   </div>
 </div>

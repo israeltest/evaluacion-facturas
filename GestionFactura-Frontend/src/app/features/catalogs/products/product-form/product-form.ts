@@ -5,12 +5,13 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { ProductService, Product } from '../../../../core/services/product';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule],
   templateUrl: './product-form.html',
   styleUrl: './product-form.css'
 })
@@ -28,7 +29,8 @@ export class ProductForm implements OnInit {
     this.productForm = this.fb.group({
       code: [data?.code || '', [Validators.required, Validators.maxLength(50)]],
       name: [data?.name || '', [Validators.required, Validators.maxLength(100)]],
-      price: [data?.price || '', [Validators.required, Validators.min(0.01)]]
+      price: [data?.price || 0, [Validators.required, Validators.min(0)]],
+      isActive: [data?.isActive !== false]
     });
   }
 
@@ -39,8 +41,7 @@ export class ProductForm implements OnInit {
 
     const formValue = this.productForm.value;
     const productData: Product = {
-      ...formValue,
-      isActive: true
+      ...formValue
     };
 
     if (this.isEditMode && this.data?.id) {

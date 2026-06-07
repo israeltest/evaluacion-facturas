@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Añadir servicios al contenedor
 // Configuración de Base de Datos
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -19,7 +20,11 @@ builder.Services.AddScoped<GestionFactura.Domain.Interfaces.IInvoiceRepository, 
 builder.Services.AddScoped<GestionFactura.Application.Interfaces.IClientService, GestionFactura.Application.Services.ClientService>();
 builder.Services.AddScoped<GestionFactura.Application.Interfaces.IProductService, GestionFactura.Application.Services.ProductService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 // Configuración de CORS
 builder.Services.AddCors(options =>
@@ -79,7 +84,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurar el pipeline de peticiones HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

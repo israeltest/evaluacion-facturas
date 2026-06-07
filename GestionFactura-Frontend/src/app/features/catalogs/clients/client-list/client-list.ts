@@ -20,7 +20,7 @@ export class ClientList implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  displayedColumns: string[] = ['id', 'name', 'phone', 'email', 'actions'];
+  displayedColumns: string[] = ['name', 'phone', 'email', 'status', 'added', 'actions'];
   dataSource: Client[] = [];
 
   ngOnInit(): void {
@@ -29,7 +29,10 @@ export class ClientList implements OnInit {
 
   loadClients() {
     this.clientService.getClients().subscribe({
-      next: (data) => this.dataSource = data,
+      next: (data) => this.dataSource = data.map(client => ({
+        ...client,
+        isActive: client.isActive !== false
+      })),
       error: () => this.showError('Error al cargar clientes')
     });
   }

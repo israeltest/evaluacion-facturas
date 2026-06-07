@@ -9,6 +9,7 @@ export interface Product {
   name: string;
   price: number;
   isActive?: boolean;
+  dateAdded?: string;
 }
 
 @Injectable({

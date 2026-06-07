@@ -17,7 +17,6 @@ public class Repository<T> : IRepository<T> where T : class
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        // AsNoTracking para mejorar el rendimiento en lecturas
         return await _dbSet.AsNoTracking().ToListAsync();
     }
 

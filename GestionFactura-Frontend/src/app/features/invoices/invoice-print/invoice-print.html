@@ -1,0 +1,90 @@
+<div *ngIf="loading" class="loading-state">
+  <p>Cargando factura...</p>
+</div>
+
+<!-- Ocultar barra superior en impresión, pero mostrar botón volver en pantalla -->
+<div class="print-actions no-print" *ngIf="!loading">
+  <button (click)="goBack()" class="btn-back">Volver a Facturas</button>
+  <button (click)="printNow()" class="btn-print">Imprimir de nuevo</button>
+</div>
+
+<div class="invoice-container" *ngIf="!loading && invoice && companyConfig">
+  <!-- Encabezado / Logo -->
+  <div class="invoice-header">
+    <div class="company-details">
+      <h2>{{ companyConfig.companyName }}</h2>
+      <p>{{ companyConfig.address }}</p>
+      <p>Teléfono: {{ companyConfig.phone }}</p>
+      <p>Email: {{ companyConfig.email }}</p>
+      <p>{{ companyConfig.city }}, {{ companyConfig.region }}</p>
+    </div>
+    <div class="invoice-meta">
+      <h1 class="invoice-title">FACTURA N° {{ invoice.invoiceNumber }}</h1>
+      <p><strong>Fecha:</strong> {{ invoice.date | date:'dd/MM/yyyy' }}</p>
+      <p><strong>Estado:</strong> {{ invoice.status }}</p>
+      <p><strong>Forma de Pago:</strong> {{ invoice.paymentMethod }}</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Información del Cliente y Vendedor -->
+  <div class="billing-info">
+    <div class="bill-to">
+      <h3>FACTURAR A</h3>
+      <p><strong>{{ invoice.client.name }}</strong></p>
+      <p>Teléfono: {{ invoice.client.phone }}</p>
+      <p>Email: {{ invoice.client.email }}</p>
+      <p>{{ invoice.client.address }}</p>
+    </div>
+    <div class="seller-info">
+      <h3>VENDEDOR</h3>
+      <p>{{ invoice.seller.name }}</p>
+      <p>{{ invoice.seller.email }}</p>
+    </div>
+  </div>
+
+  <!-- Tabla de Detalles -->
+  <table class="invoice-table">
+    <thead>
+      <tr>
+        <th>CANT.</th>
+        <th>DESCRIPCIÓN</th>
+        <th class="text-right">PRECIO UNIT.</th>
+        <th class="text-right">PRECIO TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of invoice.details">
+        <td class="text-center">{{ item.quantity }}</td>
+        <td>
+          <strong>{{ item.productCode }}</strong> - {{ item.description }}
+        </td>
+        <td class="text-right">{{ item.unitPrice | currency }}</td>
+        <td class="text-right">{{ item.totalPrice | currency }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Totales -->
+  <div class="totals-container">
+    <div class="totals-box">
+      <div class="total-row">
+        <span>SUBTOTAL $</span>
+        <span>{{ invoice.subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row">
+        <span>IVA (13%) $</span>
+        <span>{{ invoice.tax | number:'1.2-2' }}</span>
+      </div>
+      <div class="total-row grand-total">
+        <span>TOTAL $</span>
+        <span>{{ invoice.total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-message">
+    <p><strong>¡Gracias por su compra!</strong></p>
+  </div>
+</div>

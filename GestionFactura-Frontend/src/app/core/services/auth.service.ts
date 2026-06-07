@@ -14,10 +14,9 @@ export interface LoginResponse {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  // Signal reactivo para saber si el usuario está autenticado
   public isAuthenticated = signal<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   private hasToken(): boolean {
     return !!localStorage.getItem('token');

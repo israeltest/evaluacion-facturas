@@ -24,6 +24,14 @@
       <textarea matInput formControlName="address" rows="3" placeholder="Ej: Av. Principal y Secundaria"></textarea>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="true">Activo</mat-option>
+        <mat-option [value]="false">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

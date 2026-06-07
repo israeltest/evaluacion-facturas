@@ -21,9 +21,9 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
-        // Traemos solo los activos por defecto
-        var products = await _productRepo.FindAsync(p => p.IsActive);
-        return Ok(products.OrderByDescending(p => p.Id));
+        // Se traen solo los activos por defecto
+        var products = await _productRepo.GetAllAsync();
+        return Ok(products.Where(p => p.IsActive).OrderByDescending(p => p.Id));
     }
 
     [HttpGet("{id}")]

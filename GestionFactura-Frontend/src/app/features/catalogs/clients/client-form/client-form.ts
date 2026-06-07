@@ -5,12 +5,13 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { ClientService, Client } from '../../../../core/services/client';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule],
   templateUrl: './client-form.html',
   styleUrl: './client-form.css'
 })
@@ -29,7 +30,8 @@ export class ClientForm implements OnInit {
       name: [data?.name || '', [Validators.required, Validators.maxLength(100)]],
       phone: [data?.phone || '', Validators.maxLength(20)],
       email: [data?.email || '', [Validators.email, Validators.maxLength(100)]],
-      address: [data?.address || '', Validators.maxLength(200)]
+      address: [data?.address || '', Validators.maxLength(200)],
+      isActive: [data?.isActive !== false]
     });
   }
 
@@ -40,8 +42,7 @@ export class ClientForm implements OnInit {
 
     const formValue = this.clientForm.value;
     const clientData: Client = {
-      ...formValue,
-      isActive: true
+      ...formValue
     };
 
     if (this.isEditMode && this.data?.id) {

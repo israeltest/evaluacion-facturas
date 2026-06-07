@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="userForm" class="user-form">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombres</mat-label>
+      <input matInput formControlName="nombres">
+      <mat-error *ngIf="userForm.get('nombres')?.hasError('required')">Requerido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellidos</mat-label>
+      <input matInput formControlName="apellidos">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre de Usuario (Username)</mat-label>
+      <input matInput formControlName="username">
+      <mat-error *ngIf="userForm.get('username')?.hasError('required')">Requerido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo Electrónico</mat-label>
+      <input matInput formControlName="email" type="email">
+      <mat-error *ngIf="userForm.get('email')?.hasError('email')">Correo inválido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="passwordHash" type="password" [placeholder]="isEditMode ? 'Dejar en blanco para no cambiar' : 'Contraseña'">
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="userForm.invalid" (click)="onSubmit()">Guardar</button>
+</mat-dialog-actions>

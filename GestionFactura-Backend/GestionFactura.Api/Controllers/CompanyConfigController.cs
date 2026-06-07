@@ -56,7 +56,7 @@ public class CompanyConfigController : ControllerBase
 
         if (currentConfig == null)
         {
-            // Creamos por primera vez
+            // Se crea por primera vez
             currentConfig = new CompanyConfig
             {
                 CompanyName = dto.CompanyName,

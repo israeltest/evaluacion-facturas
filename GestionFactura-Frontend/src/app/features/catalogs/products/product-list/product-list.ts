@@ -20,7 +20,7 @@ export class ProductList implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  displayedColumns: string[] = ['id', 'code', 'name', 'price', 'actions'];
+  displayedColumns: string[] = ['code', 'name', 'price', 'status', 'added', 'actions'];
   dataSource: Product[] = [];
 
   ngOnInit(): void {
@@ -29,7 +29,10 @@ export class ProductList implements OnInit {
 
   loadProducts() {
     this.productService.getProducts().subscribe({
-      next: (data) => this.dataSource = data,
+      next: (data) => this.dataSource = data.map(prod => ({
+        ...prod,
+        isActive: prod.isActive !== false
+      })),
       error: () => this.showError('Error al cargar productos')
     });
   }

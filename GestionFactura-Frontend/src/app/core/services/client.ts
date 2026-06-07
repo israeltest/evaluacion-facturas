@@ -10,6 +10,7 @@ export interface Client {
   email: string;
   address: string;
   isActive?: boolean;
+  dateAdded?: string;
 }
 
 @Injectable({

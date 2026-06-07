@@ -22,6 +22,14 @@
       <mat-error *ngIf="productForm.get('price')?.hasError('min')">El precio debe ser mayor a 0</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="isActive">
+        <mat-option [value]="true">Activo</mat-option>
+        <mat-option [value]="false">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

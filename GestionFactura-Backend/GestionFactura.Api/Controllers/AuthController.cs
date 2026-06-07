@@ -27,14 +27,7 @@ public class AuthController : ControllerBase
     {
         var users = await _userRepository.GetAllAsync();
         
-        // TODO: por ahora validamos en texto plano la contrasena
         var user = users.FirstOrDefault(u => u.Username == login.Username && u.PasswordHash == login.Password);
-
-        
-        if (user == null && login.Username == "admin" && login.Password == "admin123")
-        {
-            user = new User { Id = 1, Username = "admin" };
-        }
 
         if (user == null)
             return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
@@ -55,11 +48,13 @@ public class AuthController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        var horasExpiracion = double.TryParse(_config["Jwt:HorasExpiracion"], out var horas) ? horas : 1;
+
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddHours(4),
+            expires: DateTime.Now.AddHours(horasExpiracion),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

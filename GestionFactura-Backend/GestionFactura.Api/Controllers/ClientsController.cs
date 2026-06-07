@@ -21,9 +21,9 @@ public class ClientsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetClients()
     {
-        // Traemos solo los activos por defecto (borrado lógico)
-        var clients = await _clientRepo.FindAsync(c => c.IsActive);
-        return Ok(clients.OrderByDescending(c => c.Id));
+        // activos por defecto (borrado lógico)
+        var clients = await _clientRepo.GetAllAsync();
+        return Ok(clients.Where(c => c.IsActive).OrderByDescending(c => c.Id));
     }
 
     [HttpGet("{id}")]
@@ -75,7 +75,6 @@ public class ClientsController : ControllerBase
         var client = await _clientRepo.GetByIdAsync(id);
         if (client == null) return NotFound("Cliente no encontrado.");
 
-        // Borrado lógico: desactivamos en lugar de borrar para mantener histórico de facturas
         client.IsActive = false;
         await _clientRepo.UpdateAsync(client);
 
