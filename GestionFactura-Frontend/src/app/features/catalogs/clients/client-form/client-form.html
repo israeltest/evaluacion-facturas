@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="clientForm" class="client-form">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre del Cliente</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Juan Pérez">
+      <mat-error *ngIf="clientForm.get('name')?.hasError('required')">El nombre es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="phone" placeholder="Ej: 0999999999">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo Electrónico</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="Ej: correo@ejemplo.com">
+      <mat-error *ngIf="clientForm.get('email')?.hasError('email')">Correo inválido</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Dirección</mat-label>
+      <textarea matInput formControlName="address" rows="3" placeholder="Ej: Av. Principal y Secundaria"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="clientForm.invalid" (click)="onSubmit()">Guardar</button>
+</mat-dialog-actions>

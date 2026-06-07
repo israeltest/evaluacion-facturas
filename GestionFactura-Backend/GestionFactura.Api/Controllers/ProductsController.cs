@@ -1,5 +1,6 @@
 namespace GestionFactura.Api.Controllers;
 
+using GestionFactura.Api.DTOs;
 using GestionFactura.Domain.Entities;
 using GestionFactura.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,53 +11,72 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class ProductsController : ControllerBase
 {
-    private readonly GestionFactura.Application.Interfaces.IProductService _productService;
+    private readonly IRepository<Product> _productRepo;
 
-    public ProductsController(GestionFactura.Application.Interfaces.IProductService productService)
+    public ProductsController(IRepository<Product> productRepo)
     {
-        _productService = productService;
+        _productRepo = productRepo;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetProducts()
     {
-        var products = await _productService.GetAllActiveAsync();
-        return Ok(products);
+        // Traemos solo los activos por defecto
+        var products = await _productRepo.FindAsync(p => p.IsActive);
+        return Ok(products.OrderByDescending(p => p.Id));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetProduct(int id)
     {
-        var product = await _productService.GetByIdAsync(id);
-        if (product == null) return NotFound();
+        var product = await _productRepo.GetByIdAsync(id);
+        if (product == null) return NotFound("Producto no encontrado.");
         return Ok(product);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Product product)
+    public async Task<IActionResult> CreateProduct([FromBody] ProductDto dto)
     {
-        var created = await _productService.CreateAsync(product);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var newProduct = new Product
+        {
+            Code = dto.Code,
+            Name = dto.Name,
+            Price = dto.Price,
+            IsActive = true,
+            DateAdded = DateTime.UtcNow
+        };
+
+        await _productRepo.AddAsync(newProduct);
+        return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Product product)
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto dto)
     {
-        try 
-        {
-            await _productService.UpdateAsync(id, product);
-            return NoContent();
-        } 
-        catch 
-        {
-            return BadRequest();
-        }
+        var product = await _productRepo.GetByIdAsync(id);
+        if (product == null) return NotFound("Producto no encontrado.");
+
+        product.Code = dto.Code;
+        product.Name = dto.Name;
+        product.Price = dto.Price;
+        product.IsActive = dto.IsActive;
+
+        await _productRepo.UpdateAsync(product);
+        return Ok(product);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteProduct(int id)
     {
-        await _productService.DeleteLogicAsync(id);
-        return NoContent();
+        var product = await _productRepo.GetByIdAsync(id);
+        if (product == null) return NotFound("Producto no encontrado.");
+
+        // Borrado lógico
+        product.IsActive = false;
+        await _productRepo.UpdateAsync(product);
+
+        return Ok(new { message = "Producto desactivado correctamente." });
     }
 }

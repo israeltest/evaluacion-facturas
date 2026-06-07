@@ -1,0 +1,91 @@
+<div class="config-container">
+  <mat-card class="config-card">
+    <mat-card-header>
+      <div mat-card-avatar class="header-icon">
+        <mat-icon>business</mat-icon>
+      </div>
+      <mat-card-title>Configuración de la Empresa</mat-card-title>
+      <mat-card-subtitle>Información base para la emisión de facturas</mat-card-subtitle>
+    </mat-card-header>
+
+    <div *ngIf="isLoading" class="loading-overlay">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <mat-card-content *ngIf="!isLoading">
+      <form [formGroup]="configForm" (ngSubmit)="onSubmit()" class="config-form">
+        
+        <h3 class="section-title">Información General</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre / Razón Social</mat-label>
+            <input matInput formControlName="companyName" placeholder="Ej: Mi Empresa S.A.">
+            <mat-error *ngIf="configForm.get('companyName')?.hasError('required')">El nombre es obligatorio</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone" placeholder="Ej: +593 999 999 999">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Correo Electrónico</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Ej: info@miempresa.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="configForm.get('email')?.hasError('email')">Correo inválido</mat-error>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Facturación e Impuestos</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Porcentaje de Impuesto (IVA)</mat-label>
+            <input matInput type="number" formControlName="taxPercentage" min="0" max="100">
+            <span matTextSuffix>%</span>
+            <mat-error *ngIf="configForm.get('taxPercentage')?.hasError('required')">Requerido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Símbolo de Moneda</mat-label>
+            <input matInput formControlName="currencySymbol" placeholder="Ej: $, €, S/">
+            <mat-error *ngIf="configForm.get('currencySymbol')?.hasError('required')">Requerido</mat-error>
+          </mat-form-field>
+        </div>
+
+        <h3 class="section-title">Dirección</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Dirección Principal</mat-label>
+          <textarea matInput formControlName="address" rows="2" placeholder="Ej: Av. Principal 123 y Secundaria"></textarea>
+        </mat-form-field>
+
+        <div class="form-row three-cols">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ciudad</mat-label>
+            <input matInput formControlName="city">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Región / Provincia</mat-label>
+            <input matInput formControlName="region">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Código Postal</mat-label>
+            <input matInput formControlName="postalCode">
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="configForm.invalid || isSaving">
+            <mat-icon *ngIf="!isSaving">save</mat-icon>
+            <mat-spinner *ngIf="isSaving" diameter="20" class="btn-spinner"></mat-spinner>
+            <span>{{ isSaving ? 'Guardando...' : 'Guardar Configuración' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

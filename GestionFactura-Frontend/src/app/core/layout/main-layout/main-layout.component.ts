@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatListModule } from '@angular/material/list';
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterLink,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,

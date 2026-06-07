@@ -1,5 +1,6 @@
 namespace GestionFactura.Api.Controllers;
 
+using GestionFactura.Api.DTOs;
 using GestionFactura.Domain.Entities;
 using GestionFactura.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,54 +11,74 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class ClientsController : ControllerBase
 {
-    private readonly GestionFactura.Application.Interfaces.IClientService _clientService;
+    private readonly IRepository<Client> _clientRepo;
 
-    public ClientsController(GestionFactura.Application.Interfaces.IClientService clientService)
+    public ClientsController(IRepository<Client> clientRepo)
     {
-        _clientService = clientService;
+        _clientRepo = clientRepo;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetClients()
     {
-        var clients = await _clientService.GetAllActiveAsync();
-        // solo devolvemos los activos.
-        return Ok(clients);
+        // Traemos solo los activos por defecto (borrado lógico)
+        var clients = await _clientRepo.FindAsync(c => c.IsActive);
+        return Ok(clients.OrderByDescending(c => c.Id));
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetClient(int id)
     {
-        var client = await _clientService.GetByIdAsync(id);
-        if (client == null) return NotFound();
+        var client = await _clientRepo.GetByIdAsync(id);
+        if (client == null) return NotFound("Cliente no encontrado.");
         return Ok(client);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Client client)
+    public async Task<IActionResult> CreateClient([FromBody] ClientDto dto)
     {
-        var created = await _clientService.CreateAsync(client);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var newClient = new Client
+        {
+            Name = dto.Name,
+            Phone = dto.Phone,
+            Email = dto.Email,
+            Address = dto.Address,
+            IsActive = true,
+            DateAdded = DateTime.UtcNow
+        };
+
+        await _clientRepo.AddAsync(newClient);
+        return CreatedAtAction(nameof(GetClient), new { id = newClient.Id }, newClient);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Client client)
+    public async Task<IActionResult> UpdateClient(int id, [FromBody] ClientDto dto)
     {
-        try 
-        {
-            await _clientService.UpdateAsync(id, client);
-            return NoContent();
-        } 
-        catch 
-        {
-            return BadRequest();
-        }
+        var client = await _clientRepo.GetByIdAsync(id);
+        if (client == null) return NotFound("Cliente no encontrado.");
+
+        client.Name = dto.Name;
+        client.Phone = dto.Phone;
+        client.Email = dto.Email;
+        client.Address = dto.Address;
+        client.IsActive = dto.IsActive;
+
+        await _clientRepo.UpdateAsync(client);
+        return Ok(client);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteClient(int id)
     {
-        await _clientService.DeleteLogicAsync(id);
-        return NoContent();
+        var client = await _clientRepo.GetByIdAsync(id);
+        if (client == null) return NotFound("Cliente no encontrado.");
+
+        // Borrado lógico: desactivamos en lugar de borrar para mantener histórico de facturas
+        client.IsActive = false;
+        await _clientRepo.UpdateAsync(client);
+
+        return Ok(new { message = "Cliente desactivado correctamente." });
     }
 }

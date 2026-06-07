@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="productForm" class="product-form">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código</mat-label>
+      <input matInput formControlName="code" placeholder="Ej: PROD-001">
+      <mat-error *ngIf="productForm.get('code')?.hasError('required')">El código es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre / Concepto</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Servicio de Consultoría">
+      <mat-error *ngIf="productForm.get('name')?.hasError('required')">El nombre es obligatorio</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Precio Unitario</mat-label>
+      <input matInput formControlName="price" type="number" step="0.01" min="0.01" placeholder="Ej: 15.50">
+      <span matPrefix>$&nbsp;</span>
+      <mat-error *ngIf="productForm.get('price')?.hasError('required')">El precio es obligatorio</mat-error>
+      <mat-error *ngIf="productForm.get('price')?.hasError('min')">El precio debe ser mayor a 0</mat-error>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="productForm.invalid" (click)="onSubmit()">Guardar</button>
+</mat-dialog-actions>

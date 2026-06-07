@@ -11,7 +11,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) }
+      { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'configuracion', loadComponent: () => import('./features/company/config/config').then(m => m.ConfigComponent) },
+      { path: 'clientes', loadComponent: () => import('./features/catalogs/clients/client-list/client-list').then(m => m.ClientList) },
+      { path: 'productos', loadComponent: () => import('./features/catalogs/products/product-list/product-list').then(m => m.ProductList) }
     ]
   },
   { path: '**', redirectTo: 'login' }
