@@ -11,3 +11,7 @@ dist/
 *.db-shm
 *.db-wal
 .angular/
+publish/
+publish_sc/
+logs/
+*.zip

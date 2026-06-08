@@ -1,17 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ProductService, Product } from '../../../../core/services/product';
 import { ProductForm } from '../product-form/product-form';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, MatInputModule, MatFormFieldModule],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css'
 })
@@ -21,7 +23,7 @@ export class ProductList implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   displayedColumns: string[] = ['code', 'name', 'price', 'status', 'added', 'actions'];
-  dataSource: Product[] = [];
+  dataSource = new MatTableDataSource<Product>([]);
 
   ngOnInit(): void {
     this.loadProducts();
@@ -29,12 +31,17 @@ export class ProductList implements OnInit {
 
   loadProducts() {
     this.productService.getProducts().subscribe({
-      next: (data) => this.dataSource = data.map(prod => ({
+      next: (data) => this.dataSource.data = data.map(prod => ({
         ...prod,
         isActive: prod.isActive !== false
       })),
       error: () => this.showError('Error al cargar productos')
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   openAddDialog() {

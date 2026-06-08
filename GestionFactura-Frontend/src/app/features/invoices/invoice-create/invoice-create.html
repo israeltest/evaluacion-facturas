@@ -4,8 +4,6 @@
   <mat-card>
     <mat-card-content>
       <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
-        
-        <!-- Información Principal -->
         <div class="form-row">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Cliente</mat-label>
@@ -29,7 +27,6 @@
         <mat-divider></mat-divider>
         <h3 class="section-title">Detalles</h3>
 
-        <!-- Arreglo de Formulario para los Detalles -->
         <div formArrayName="details">
           <div *ngFor="let detail of details.controls; let i=index" [formGroupName]="i" class="detail-row">
             
@@ -80,7 +77,6 @@
 
         <mat-divider></mat-divider>
 
-        <!-- Resumen de Totales -->
         <div class="totals-section">
           <div class="total-row">
             <span>Subtotal:</span>
@@ -96,7 +92,6 @@
           </div>
         </div>
 
-        <!-- Botones de Acción -->
         <div class="form-actions">
           <button type="button" mat-button (click)="cancel()">Cancelar</button>
           <button type="submit" mat-raised-button color="primary" [disabled]="invoiceForm.invalid">

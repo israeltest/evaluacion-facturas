@@ -1,9 +1,15 @@
-<div class="list-header">
-  <h2>Catálogo de Productos / Servicios</h2>
-  <button mat-raised-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon> Nuevo Producto
-  </button>
-</div>
+<div class="list-container">
+  <div class="header-actions">
+    <mat-form-field appearance="outline" class="search-filter">
+      <mat-label>Buscar productos</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ej. PRD-001 o Laptop">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add_circle</mat-icon> Nuevo Producto
+    </button>
+  </div>
 
 <div class="mat-elevation-z8 table-container">
   <table mat-table [dataSource]="dataSource">
@@ -58,7 +64,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   
-  <div *ngIf="dataSource.length === 0" class="no-data">
+  <div *ngIf="dataSource.data.length === 0" class="no-data">
     No hay productos registrados.
   </div>
 </div>

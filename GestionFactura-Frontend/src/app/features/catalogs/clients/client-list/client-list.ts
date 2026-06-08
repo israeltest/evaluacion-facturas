@@ -1,17 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ClientService, Client } from '../../../../core/services/client';
 import { ClientForm } from '../client-form/client-form';
 
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, MatInputModule, MatFormFieldModule],
   templateUrl: './client-list.html',
   styleUrl: './client-list.css'
 })
@@ -21,7 +23,7 @@ export class ClientList implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   displayedColumns: string[] = ['name', 'phone', 'email', 'status', 'added', 'actions'];
-  dataSource: Client[] = [];
+  dataSource = new MatTableDataSource<Client>([]);
 
   ngOnInit(): void {
     this.loadClients();
@@ -29,12 +31,17 @@ export class ClientList implements OnInit {
 
   loadClients() {
     this.clientService.getClients().subscribe({
-      next: (data) => this.dataSource = data.map(client => ({
+      next: (data) => this.dataSource.data = data.map(client => ({
         ...client,
         isActive: client.isActive !== false
       })),
       error: () => this.showError('Error al cargar clientes')
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   openAddDialog() {

@@ -1,10 +1,15 @@
-<div class="header-actions">
-  <h2>Facturas Emitidas</h2>
-  <button mat-raised-color color="primary" (click)="createNew()">
-    <mat-icon>add</mat-icon>
-    Nueva Factura
-  </button>
-</div>
+<div class="list-container">
+  <div class="header-actions">
+    <mat-form-field appearance="outline" class="search-filter">
+      <mat-label>Buscar facturas</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ej. Cliente o F-001">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="createNew()">
+      <mat-icon>add_circle</mat-icon> Nueva Factura
+    </button>
+  </div>
 
 <div class="mat-elevation-z8 table-container">
   <table mat-table [dataSource]="dataSource">

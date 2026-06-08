@@ -41,6 +41,7 @@ export class InvoiceCreate implements OnInit {
   private productService = inject(ProductService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
 
   invoiceForm!: FormGroup;
   clients: any[] = [];
@@ -53,8 +54,7 @@ export class InvoiceCreate implements OnInit {
     this.loadData();
     this.setupCalculations();
 
-    const route = inject(ActivatedRoute);
-    const idParam = route.snapshot.paramMap.get('id');
+    const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;
       this.invoiceId = +idParam;
@@ -71,7 +71,6 @@ export class InvoiceCreate implements OnInit {
       total: [{ value: 0, disabled: true }],
       details: this.fb.array([], Validators.required)
     });
-    // Se añade la primera fila por defecto
     this.addDetail();
   }
 
@@ -88,10 +87,8 @@ export class InvoiceCreate implements OnInit {
           paymentMethod: invoice.paymentMethod
         });
         
-        // Limpiar primer detalle vacio
         this.details.clear();
 
-        // Cargar detalles
         if (invoice.details && invoice.details.length > 0) {
           invoice.details.forEach((d: any) => {
             const detailForm = this.fb.group({
@@ -120,7 +117,7 @@ export class InvoiceCreate implements OnInit {
 
   addDetail(): void {
     const detailForm = this.fb.group({
-      productId: [''], // Puede ir vacío si es un ingreso manual
+      productId: [''],
       productCode: ['', Validators.required],
       description: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
@@ -151,7 +148,6 @@ export class InvoiceCreate implements OnInit {
 
   setupCalculations(): void {
     this.details.valueChanges.subscribe(() => {
-      // Recalcular todas las filas cuando cambia algún valor (como cantidad o precio)
       for (let i = 0; i < this.details.length; i++) {
         this.calculateRowTotal(i, false);
       }
@@ -165,7 +161,6 @@ export class InvoiceCreate implements OnInit {
     const price = detail.get('unitPrice')?.value || 0;
     const total = qty * price;
     
-    // Se actualiza el campo readonly sin disparar el valueChanges de nuevo para evitar un ciclo infinito
     detail.get('totalPrice')?.setValue(total, { emitEvent: false });
     
     if (triggerGlobal) {
@@ -180,7 +175,7 @@ export class InvoiceCreate implements OnInit {
       subtotal += rowTotal;
     }
 
-    const tax = subtotal * 0.13; // 13% IVA
+    const tax = subtotal * 0.13;
     const total = subtotal + tax;
 
     this.invoiceForm.patchValue({
@@ -209,7 +204,6 @@ export class InvoiceCreate implements OnInit {
         this.invoiceService.createInvoice(rawData).subscribe({
           next: (invoice) => {
             this.snackBar.open('Factura creada exitosamente', 'Cerrar', { duration: 3000 });
-            // Ir directo a la pantalla de impresión
             this.router.navigate(['/facturas/imprimir', invoice.id]);
           },
           error: (err) => {

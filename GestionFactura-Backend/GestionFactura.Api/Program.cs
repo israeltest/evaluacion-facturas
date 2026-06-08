@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using GestionFactura.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.ConfigureSerilog();
 
 // Añadir servicios al contenedor
 // Configuración de Base de Datos
@@ -31,7 +33,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -84,12 +86,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.ConfigureExceptionHandler();
+
 // Configurar el pipeline de peticiones HTTP
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GestionFactura API v1"));
-}
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GestionFactura API v1"));
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 
 app.UseHttpsRedirection();
 
@@ -99,5 +104,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
